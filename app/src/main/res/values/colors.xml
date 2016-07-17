@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- System UI colors -->
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">@color/colorBrand</color>
+    <color name="colorAccent">#FF5722</color>
+
+    <color name="colorBrand">#FF39CD83</color>
+    <color name="colorBrandMask">#24000000</color>
+    <color name="colorText">#FFFFFF</color>
+    <color name="colorTextShade">#FF73DEAC</color>
+    <color name="colorBlack">#000000</color>
+</resources>

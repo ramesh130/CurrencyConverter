@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Currency Converter</string>
+
+    <string name="gbp">"\u00a3"</string>
+    <string name="eur">"\u20ac"</string>
+    <string name="usd">"\u0024"</string>
+    <string name="cad">"\u0024"</string>
+    <string name="jpy">"\u00A5"</string>
+    <string name="aud">"\u0024"</string>
+
+    <string name="gbp_text">"GBP"</string>
+    <string name="eur_text">"EUR"</string>
+    <string name="usd_text">"USD"</string>
+    <string name="cad_text">"CAD"</string>
+    <string name="jpy_text">"JPY"</string>
+    <string name="aud_text">"AUD"</string>
+    <string name="pad_text">"PAD"</string>
+
+    <string-array name="currency_symbol">
+        <item>@string/gbp</item>
+        <item>@string/eur</item>
+        <item>@string/usd</item>
+        <item>@string/cad</item>
+        <item>@string/jpy</item>
+        <item>@string/aud</item>
+    </string-array>
+
+    <string-array name="currency_name">
+        <item>@string/gbp_text</item>
+        <item>@string/eur_text</item>
+        <item>@string/usd_text</item>
+        <item>@string/cad_text</item>
+        <item>@string/jpy_text</item>
+        <item>@string/aud_text</item>
+    </string-array>
+
+</resources>
