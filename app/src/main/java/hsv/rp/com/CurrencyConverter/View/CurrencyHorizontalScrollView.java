@@ -42,19 +42,21 @@ public class CurrencyHorizontalScrollView extends HorizontalScrollView {
     // Hold views for easy access
     class ViewHolder {
         public TextView[] mTextViews;
+        public LinearLayout mContainer;
         public int mSelectedColor;
-        public int mUnSelectdColor;
+        public int mUnSelectedColor;
     }
     private ViewHolder mHolder;
     private onScrollItemChangeListener mOnScrollItemChangeListener;
-    private TextView mLastFocussedView;
+    private TextView mLastFocusedView;
+    private int mOrigin = -1;
 
     public CurrencyHorizontalScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         mHolder = new ViewHolder();
         mHolder.mSelectedColor = ContextCompat.getColor(context, R.color.colorText);
-        mHolder.mUnSelectdColor = ContextCompat.getColor(context, R.color.colorTextShade);
+        mHolder.mUnSelectedColor = ContextCompat.getColor(context, R.color.colorTextShade);
     }
 
     /**
@@ -70,10 +72,15 @@ public class CurrencyHorizontalScrollView extends HorizontalScrollView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        mLastFocussedView = (TextView) findViewById(R.id.horizontal_scroll_textview_eur);
-        scrollTo(mLastFocussedView.getLeft(), 0);
-
+        // Get all the frequently used views in the holder
         holdViews();
+
+        // Center the scrollview
+        TextView tv = mHolder.mTextViews[mHolder.mTextViews.length / 2 - 1];
+        scrollTo(tv.getLeft(), 0);
+        if(mLastFocusedView == null){
+            mLastFocusedView = tv;
+        }
     }
 
     @Override
@@ -81,13 +88,10 @@ public class CurrencyHorizontalScrollView extends HorizontalScrollView {
         super.onDraw(canvas);
 
         for(TextView tv : mHolder.mTextViews){
-            tv.setTextColor(mHolder.mUnSelectdColor);
+            tv.setTextColor(mHolder.mUnSelectedColor);
         }
 
-        TextView tv = getCurrentFocusedView();
-        if(tv != null) {
-            tv.setTextColor(mHolder.mSelectedColor);
-        }
+        mLastFocusedView.setTextColor(mHolder.mSelectedColor);
     }
 
     @Override
@@ -96,8 +100,8 @@ public class CurrencyHorizontalScrollView extends HorizontalScrollView {
 
         TextView curView = getCurrentFocusedView();
         if (curView != null) {
-            if (!mLastFocussedView.equals(curView)) {
-                mLastFocussedView = curView;
+            if (!mLastFocusedView.equals(curView)) {
+                mLastFocusedView = curView;
 
                 checkNotNull(mOnScrollItemChangeListener, "onScrollItemChangeListener cannot be Null.");
                 mOnScrollItemChangeListener.onScrollItemChange();
@@ -114,29 +118,26 @@ public class CurrencyHorizontalScrollView extends HorizontalScrollView {
     @Nullable
     TextView getCurrentFocusedView() {
         int xoff = getScrollX();
+        if(mOrigin < 0 ){
+            mOrigin = xoff;
+        }
 
         Rect centerBound = new Rect();
-        TextView sampletv = (TextView) findViewById(R.id.horizontal_scroll_textview_gbp);
+        TextView sampletv = mHolder.mTextViews[0];
 
-        LinearLayout view = (LinearLayout) findViewById(R.id.horizontal_scroll_linearlayout_container);
+        LinearLayout view = mHolder.mContainer;
         view.getHitRect(centerBound);
         int c = centerBound.centerX();
         centerBound.left = c - sampletv.getWidth();
         centerBound.right = c + sampletv.getWidth();
 
         Rect childBounds = new Rect();
-        if (view instanceof ViewGroup) {
-            int chilCnt = ((ViewGroup) view).getChildCount();
-            for (int i = 0; i < chilCnt; i++) {
-                ((ViewGroup) view).getChildAt(i).getHitRect(childBounds);
-                childBounds.left -= xoff - 2 * sampletv.getWidth();
-                childBounds.right -= xoff - 2 * sampletv.getWidth();
-                if (centerBound.contains(childBounds)) {
-                    if (((ViewGroup) view).getChildAt(i) instanceof TextView) {
-                        TextView cv = (TextView) ((ViewGroup) view).getChildAt(i);
-                        return cv;
-                    }
-                }
+        for(TextView tv : mHolder.mTextViews){
+            tv.getHitRect(childBounds);
+            childBounds.left += (mOrigin - xoff);
+            childBounds.right += (mOrigin - xoff);
+            if (centerBound.contains(childBounds)) {
+                return tv;
             }
         }
         return null;
@@ -145,6 +146,7 @@ public class CurrencyHorizontalScrollView extends HorizontalScrollView {
     private void holdViews() {
         if(mHolder.mTextViews == null) {
             LinearLayout view = (LinearLayout) findViewById(R.id.horizontal_scroll_linearlayout_container);
+            mHolder.mContainer = view;
 
             if (view instanceof ViewGroup) {
                 int childCount = ((ViewGroup) view).getChildCount();
@@ -160,12 +162,12 @@ public class CurrencyHorizontalScrollView extends HorizontalScrollView {
     }
 
     /**
-     * Get the text of the focussed view.
-     *
+     * Get the text of the focused view.
+
      * @return Text from the selected view
      */
     public String getSelectedViewText() {
-        checkNotNull(mLastFocussedView, "mLastFocussedView cannot be Null.");
-        return mLastFocussedView.getText().toString();
+        checkNotNull(mLastFocusedView, "mLastFocusedView cannot be Null.");
+        return mLastFocusedView.getText().toString();
     }
 }
