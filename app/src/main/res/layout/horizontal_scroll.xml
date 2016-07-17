@@ -25,7 +25,7 @@
             android:scrollbars="none">
 
             <LinearLayout
-                android:id="@+id/container_layout"
+                android:id="@+id/horizontal_scroll_linearlayout_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
